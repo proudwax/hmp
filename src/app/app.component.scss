@@ -1,0 +1,13 @@
+:host {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: flex-end;
+
+  height: 100%;
+  width: 100%;
+}
+
+app-calculate {
+  margin-bottom: 5vh;
+}
