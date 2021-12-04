@@ -11,7 +11,7 @@ export class CalculateService {
     @Inject(CONFIG_ACTIVE) private _config$: ConfigActive
   ) {
     this.config$ = this._config$.pipe(
-      map(config => config.calculate),
+      map(config => config),
       shareReplay({ bufferSize: 1, refCount: true })
     );
   }

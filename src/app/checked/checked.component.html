@@ -1,12 +1,13 @@
 <section class="tui-container tui-container_adaptive">
   <form class="group" [formGroup]="form">
-    <div tuiGroup class="group" [collapsed]="true" [class.tui-skeleton]="!(config$ | async)">
-      <tui-radio-block *ngFor="let item of (config$ | async); trackBy: trackByIndex"
+    <div tuiGroup class="group" [collapsed]="true">
+      <tui-radio-block
+        *ngFor="let item of (list$ | async); trackBy: trackByItem"
         contentAlign="right"
         formControlName="value"
-        [item]="item.checked.value"
+        [item]="item.value"
         size="m">
-        {{item.checked.text}}
+        {{item.text}}
       </tui-radio-block>
     </div>
   </form>

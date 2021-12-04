@@ -5,7 +5,7 @@ import {Observable, ReplaySubject, Subject} from 'rxjs';
 import {map, shareReplay, startWith} from 'rxjs/operators';
 import {DataItemAmount, DataItemWeight, DataListItem} from './list/list.component';
 import {CONFIG_ACTIVE, ConfigActive} from './config/config-active.token';
-import {ConfigItem} from './config/config.service';
+import {Config} from './config/config.service';
 
 
 
@@ -28,7 +28,7 @@ export class AppService {
 
   public getList(): Observable<DataListItem> {
     return this._config$.pipe(
-      map((config: ConfigItem) => this._initList(config.name))
+      map((config: Config) => this._initList(config))
     );
   }
 

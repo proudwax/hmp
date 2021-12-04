@@ -6,7 +6,7 @@ import {CONFIG_ACTIVE, ConfigActive} from '../config/config-active.token';
 import {APP_STORAGE} from '../storage/storage.providers';
 import {AbstractStorage} from '../storage/abstract-storage';
 import {switchMap} from 'rxjs/operators';
-import {ConfigItem} from '../config/config.service';
+import {Config} from '../config/config.service';
 
 export interface ListState {
   list: DataItemAmount[] | DataItemWeight[]
