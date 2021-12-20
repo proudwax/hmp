@@ -1,14 +1,17 @@
-import {ChangeDetectionStrategy, Component, Inject} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Inject, OnDestroy} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
-import {Observable} from "rxjs";
-import {finalize, map, tap} from 'rxjs/operators';
-import {CONFIG_LIST, ConfigList} from '../config/config.token';
+import {Observable, Subject} from "rxjs";
+import {finalize, map, takeUntil, tap} from 'rxjs/operators';
+import {CONFIG_LIST, CONFIG_PLUGIN, ConfigList} from '../config/config.token';
 import {ConfigActiveService} from '../config/config-active.service';
-import {Config} from '../config/config.service';
+import {AppConfig} from '../config/config.service';
 import {CHECKED_PLUGIN} from "./checked.token";
 import {CheckedItem, CheckedLikePlugin} from "./checked.type";
 import {AMOUNT_PROVIDER} from "./plugins/amount/amount.provider";
 import {WEIGHT_PROVIDER} from "./plugins/weight/weight.provider";
+import {APP_STORAGE} from "../storage/storage.providers";
+import {AbstractStorage} from "../storage/abstract-storage";
+import {WEIGHT_KG_PROVIDER} from "./plugins/weight-kg/weight-kg.provider";
 
 @Component({
   selector: 'app-checked',
@@ -16,29 +19,37 @@ import {WEIGHT_PROVIDER} from "./plugins/weight/weight.provider";
   styleUrls: ['./checked.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
-    AMOUNT_PROVIDER,
-    WEIGHT_PROVIDER
+    // AMOUNT_PROVIDER,
+    // WEIGHT_PROVIDER,
+    // WEIGHT_KG_PROVIDER
   ]
 })
-export class CheckedComponent {
+export class CheckedComponent implements OnDestroy {
+  private readonly _destroyed$: Subject<void> = new Subject<void>();
+  private readonly _storeKey = 'configActive';
+
+  public readonly list$: Observable<CheckedItem[]>;
   public readonly form: FormGroup = new FormGroup({
     value: new FormControl(''),
   });
 
-  public readonly list$: Observable<CheckedItem[]>;
-
   constructor(
+    @Inject(APP_STORAGE) private _storage: AbstractStorage,
     @Inject(CONFIG_LIST) public readonly config$: ConfigList,
-    @Inject(CHECKED_PLUGIN) public readonly pluginList: CheckedLikePlugin[],
+    @Inject(CONFIG_PLUGIN) public readonly pluginList: CheckedLikePlugin[],
     @Inject(ConfigActiveService) private _configActive: ConfigActiveService
   ) {
+    const active = this._storage.getItem(this._storeKey);
+
     this.list$ = this.config$.pipe(
-      map((configList: Config[]) => this._createListCheckbox(configList, this.pluginList)),
-      tap((checkedList: CheckedItem[]) => this.form.patchValue({value: checkedList[0].value})),
+      map((configList: AppConfig[]) => this._createListCheckbox(configList, this.pluginList)),
+      tap((checkedList: CheckedItem[]) => this.form.patchValue({value: active || checkedList[0].value})),
       finalize(() => console.log('CheckedComponent => finalize => list$'))
     );
 
-    this.form.valueChanges.subscribe(({value}: { value: string }) => this._configActive.changeConfig(value));
+    this.form.valueChanges.pipe(
+      takeUntil(this._destroyed$)
+    ).subscribe(({value}: { value: string }) => this._setConfigActive(value));
   }
 
   public trackByItem(index: number, item: CheckedItem): string {
@@ -46,16 +57,26 @@ export class CheckedComponent {
   }
 
   private _createListCheckbox(
-    configList: Config[],
+    configList: AppConfig[],
     pluginList: CheckedLikePlugin[]): CheckedItem[] {
-    return configList.reduce((acc: CheckedItem[], item: Config) => {
+    return configList.reduce((acc: CheckedItem[], item: AppConfig) => {
       const find = pluginList.find((plugin: CheckedLikePlugin) => plugin.support(item));
 
       if (find) {
-        acc.push(find.getData());
+        acc.push(find.getChecked());
       }
 
       return acc;
     }, []);
+  }
+
+  private _setConfigActive(config: string): void {
+    this._storage.setItem(this._storeKey, config);
+    this._configActive.changeConfig(config);
+  }
+
+  ngOnDestroy(): void {
+    this._destroyed$.next();
+    this._destroyed$.complete();
   }
 }

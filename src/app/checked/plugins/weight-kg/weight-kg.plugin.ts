@@ -1,11 +1,11 @@
 import {CheckedLikePlugin} from "../../checked.type";
 
-export class AmountPlugin implements CheckedLikePlugin {
+export class WeightKGPlugin implements CheckedLikePlugin {
   getChecked(): { value: string; text: string } {
-    return {value: 'amount', text: 'за 1 шт.'}
+    return {text: 'за 1 кг', value: 'weight-kg'};
   }
 
   support(configName: string): boolean {
-    return 'amount' === configName;
+    return 'weight-kg' === configName;
   }
 }

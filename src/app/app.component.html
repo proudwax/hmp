@@ -1,4 +1,5 @@
 <!--<app-list *ngIf="(data$ | async) as data" [data]="data" class="tui-space_top-5" (cleared)="onCleared()"></app-list>-->
+<app-list class="tui-space_top-5"></app-list>
 <app-checked class="tui-space_top-5"></app-checked>
-<app-cost [data]="cost"></app-cost>
-<app-calculate (changes)="cost = $event" (saved)="onSaved($event)"></app-calculate>
+<app-cost [data]="calculate.changes | async"></app-cost>
+<app-calculate #calculate (saved)="onSaved($event)"></app-calculate>

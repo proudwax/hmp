@@ -4,8 +4,9 @@
 
 .group {
   display: inline-flex;
+  width: auto;
 }
 
 tui-radio-block {
-  min-width: 110px;
+  flex: 1 1 auto;
 }

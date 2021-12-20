@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Inject, Input, Output} from '@angular/core';
 import {ListService} from './list.service';
+import {Observable} from "rxjs";
 
 export interface DataList {
   columns: string[];
@@ -64,9 +65,12 @@ export class ListComponent {
 
   @Output() cleared: EventEmitter<void> = new EventEmitter<void>();
 
+  public readonly list$:Observable<any>;
+
   constructor(
     @Inject(ListService) private _service: ListService
   ) {
+    this.list$ = this._service.list$;
   }
 
   public trackBy(index: number, item: any): number {

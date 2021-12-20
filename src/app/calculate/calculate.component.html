@@ -1,23 +1,12 @@
-<form class="tui-container tui-container_adaptive" *ngIf="(config$ | async) as data" [formGroup]="form" (ngSubmit)="onSubmit($event)">
-  <div tuiGroup>
-    <div>
+<form class="tui-container tui-container_adaptive" *ngIf="(list$ | async) as data" [formGroup]="form" (ngSubmit)="onSubmit($event)">
+  <div tuiGroup formArrayName="calculate">
+    <div *ngFor="let _ of calculate.controls; index as i; trackBy: trackByIndex">
       <tui-input-number
         class="tui-group__inherit-item"
-        formControlName="cost"
-        [postfix]="data.fields.cost.text"
+        [formControlName]="i"
+        [postfix]="data.unit[i]"
         tuiTextfieldSize="m"
         [tuiTextfieldLabelOutside]="true"></tui-input-number>
-    </div>
-    <div>
-      <tui-input-slider
-        class="tui-group__inherit-item"
-        formControlName="unit"
-        [min]="2"
-        [max]="1000"
-        [quantum]="1"
-        size="m"
-        [pluralize]="data.fields.unit.pluralize"
-        [tuiTextfieldLabelOutside]="true"></tui-input-slider>
     </div>
     <button
       class="tui-group__auto-width-item"
@@ -36,7 +25,7 @@
       size="m"
       icon="tuiIconCloseLarge"
       [disabled]="buttonDisabled"
-      (click)="onClick($event)"
+      (click)="onReset($event)"
     ></button>
   </div>
 </form>

@@ -16,16 +16,15 @@ import {DataItemAmount, DataItemWeight} from './list/list.component';
   ]
 })
 export class AppComponent {
-  public cost: string = '0.00';
-  public data$: Observable<DataItemAmount[] | DataItemWeight[]>;
+  // public data$: Observable<number[][]>;
 
   constructor(
     @Inject(AppService) private _appService: AppService
   ) {
-    this.data$ = this._appService.getList();
+    // this.data$ = this._appService.getList();
   }
 
-  public onSaved(data: DataItemAmount | DataItemWeight): void {
+  public onSaved(data: number[]): void {
     this._appService.addListItem(data);
   }
 

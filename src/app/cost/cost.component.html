@@ -1,1 +1,1 @@
-<h1 class="tui-text_h1" [class.tui-skeleton]="!(config$ | async)">{{data}} ₽</h1>
+<h1 class="tui-text_h1">{{(data || 0) | tuiFormatNumber}} ₽</h1>

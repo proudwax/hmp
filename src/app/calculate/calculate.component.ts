@@ -1,73 +1,140 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Inject, Output} from '@angular/core';
-import {FormControl, FormGroup} from '@angular/forms';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Inject,
+  OnDestroy,
+  Output
+} from '@angular/core';
+import {AbstractControl, FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {TuiPluralize} from '@taiga-ui/core';
-import {debounceTime, map, switchMap, tap} from 'rxjs/operators';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  shareReplay,
+  startWith,
+  switchMap,
+  takeUntil,
+  tap
+} from 'rxjs/operators';
 import {CalculateService} from './calculate.service';
-import {Observable} from 'rxjs';
-
-interface FormCalculate {
-  weight: number;
-  cost: number;
-  total: number;
-}
+import {Observable, Subject} from 'rxjs';
+import {AMOUNT_PROVIDER} from "./plugins/amount/amount.provider";
+import {WEIGHT_PROVIDER} from "./plugins/weight/weight.provider";
+import {CONFIG_ACTIVE, ConfigActive} from "../config/config-active.token";
+import {CALCULATE_PLUGIN} from "./calculate.token";
+import {CalculateItem, CalculateLikePlugin, CalculateSaved} from "./calculate.type";
+import {AppConfig} from "../config/config.service";
+import {CalculateForm} from "./calculate.form";
+import {WEIGHT_KG_PROVIDER} from "./plugins/weight-kg/weight.provider";
+import {CONFIG_PLUGIN} from "../config/config.token";
 
 @Component({
   selector: 'app-calculate',
+  exportAs: 'appCalculate',
   templateUrl: './calculate.component.html',
   styleUrls: ['./calculate.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
-    { provide: CalculateService, useClass: CalculateService }
+    // AMOUNT_PROVIDER,
+    // WEIGHT_PROVIDER,
+    // WEIGHT_KG_PROVIDER,
+    {provide: CalculateService, useClass: CalculateService}
   ]
 })
-export class CalculateComponent {
-  private _result = 0;
+export class CalculateComponent implements OnDestroy {
+  private _destroyed$: Subject<void> = new Subject<void>();
 
-  public config$: Observable<any>;
+  public readonly list$: Observable<CalculateItem>;
+  public form!: CalculateForm;
   public buttonDisabled: boolean = true;
 
-  public readonly form: FormGroup = new FormGroup({
-    cost: new FormControl(0),
-    unit: new FormControl(0),
-  });
 
-  public readonly pluralize: TuiPluralize = ['гр.', 'гр.', 'гр.'];
+  public get calculate(): FormArray {
+    return this.form.get('calculate') as FormArray;
+  }
 
-  @Output() readonly changes = this._service.config$.pipe(
-    tap(() => this.form.reset({ cost: 0, unit: 0 })),
-    switchMap(config => this.form.valueChanges.pipe(
-      tap(({cost, unit}) => (this.buttonDisabled && +cost && +unit) ? this.buttonDisabled = false : null),
-      debounceTime(150),
-      map(({ unit, cost }) => config.handler(cost, unit)),
-    )),
-    map(result => result.toFixed(2)),
-    tap(result => this._result = result)
-  );
+  public get total(): FormControl {
+    return this.form.get('total') as FormControl
+  }
 
-  @Output() readonly saved: EventEmitter<FormCalculate> = new EventEmitter<FormCalculate>();
+  @Output() readonly changes: EventEmitter<number> = new EventEmitter<number>();
+  @Output() readonly saved: EventEmitter<CalculateSaved> = new EventEmitter<CalculateSaved>();
 
   constructor(
-    @Inject(CalculateService) private _service: CalculateService,
+    @Inject(CONFIG_ACTIVE) private readonly _activeConfig$: ConfigActive,
+    @Inject(CONFIG_PLUGIN) private readonly pluginList: CalculateLikePlugin[],
+    @Inject(FormBuilder) private readonly _fb: FormBuilder,
+    @Inject(ChangeDetectorRef) private readonly _cdr: ChangeDetectorRef
   ) {
-    this.config$ = this._service.config$;
+    this.form = new CalculateForm({
+      calculate: this._fb.array([]),
+      total: this._fb.control(0)
+    });
 
-    this.config$.subscribe(res => console.log(res));
+    this.list$ = this._activeConfig$.pipe(
+      map((config: AppConfig) => {
+        const find = this.pluginList!.find((plugin: CalculateLikePlugin) => plugin.support(config));
+
+        return find!.getCalculate();
+      }),
+      tap(({unit}) => this._createForm(unit.length)),
+      shareReplay({refCount: true, bufferSize: 1})
+    );
+
+    this.list$.pipe(
+      switchMap(({handler}: CalculateItem) => this.calculate.valueChanges.pipe(
+        map((value: number[]) => handler(...value))
+      )),
+      distinctUntilChanged()
+    ).subscribe((total: number) => {
+      const result = parseFloat(total.toFixed(2));
+      this.total.patchValue(result);
+    });
+
+    this.total.valueChanges.pipe(
+      takeUntil(this._destroyed$),
+      tap((value: number) => this.buttonDisabled = !value)
+    ).subscribe((value: number) => this.changes.emit(value));
   }
 
   onSave(event: MouseEvent): void {
     event.preventDefault();
-    this.saved.emit({...this.form.value, total: this._result,});
-    this.form.reset({unit: 0, cost: 0});
+    this.saved.emit([...this.calculate.value, this.total.value]);
+    this._resetForm();
     this.buttonDisabled = true;
   }
 
-  onClick(event: MouseEvent): void {
+  onReset(event: MouseEvent): void {
     event.preventDefault();
-    this.form.reset({unit: 0, cost: 0});
+    this._resetForm();
     this.buttonDisabled = true;
   }
 
   onSubmit(event: any): void {
     console.log(event)
+  }
+
+  private _resetForm(): void {
+    this.calculate.reset([0, 0]);
+  }
+
+  private _createForm(length: number): void {
+    this.calculate.clear();
+
+    for (let i = 0; i < length; i++) {
+      (this.form.get('calculate')! as FormArray).push(this._fb.control(0))
+    }
+  }
+
+  public trackByIndex(index: number, item: AbstractControl): AbstractControl {
+    return item;
+  }
+
+  ngOnDestroy(): void {
+    this._destroyed$.next();
+    this._destroyed$.complete();
   }
 }

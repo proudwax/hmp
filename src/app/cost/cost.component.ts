@@ -1,5 +1,4 @@
-import {ChangeDetectionStrategy, Component, Inject, Input, OnInit} from '@angular/core';
-import {CONFIG_ACTIVE, ConfigActive} from '../config/config-active.token';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 
 @Component({
   selector: 'app-cost',
@@ -8,10 +7,5 @@ import {CONFIG_ACTIVE, ConfigActive} from '../config/config-active.token';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CostComponent {
-
-  @Input() data: string | null = null;
-
-  constructor(
-    @Inject(CONFIG_ACTIVE) public config$: ConfigActive
-  ) { }
+  @Input() data: number | null = 0;
 }
