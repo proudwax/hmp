@@ -1,85 +1,63 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Inject, Input, Output} from '@angular/core';
-import {ListService} from './list.service';
-import {Observable} from "rxjs";
-
-export interface DataList {
-  columns: string[];
-  titles: { [key: string]: string };
-  list: DataListItem;
-  units: { [key: string]: string };
-}
-
-export type DataListItem = DataItemAmount[] | DataItemWeight[];
-
-export interface DataItemAmount extends DataItem {
-  amount: number;
-}
-
-export interface DataItemWeight extends DataItem {
-  weight: number;
-}
-
-export interface DataItem {
-  cost: number;
-  total: number;
-}
+import {CONFIG_PLUGIN} from "../config/config.token";
+import {CONFIG_ACTIVE, ConfigActive} from "../config/config-active.token";
+import {tuiFadeIn, tuiFadeInBottom, tuiHeightCollapse} from "@taiga-ui/core";
+import {AppConfig} from "../config/config.service";
+import {map} from "rxjs/operators";
+import {ListLikePlugin} from "./list.type";
 
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss'],
-  providers: [
-    {
-      provide: ListService
-    }
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [tuiFadeIn, tuiFadeInBottom, tuiHeightCollapse]
 })
 export class ListComponent {
   @Input()
-  public set data(value: DataList) {
-    const totalArray = value.list.map(item => item.total);
-    const min = Math.min(...totalArray);
-    const max = Math.max(...totalArray);
-
-    this.getColor = this._service.getColor([min, max]);
+  public set data(value: number[][]) {
+    this.min = Math.min(...value.map(item => item[2]));
 
     this._data = value;
   }
 
-  public get data(): DataList {
+  public get data(): number[][] {
     return this._data;
   }
 
-  private _data!: DataList;
+  private _data: number[][] = [];
 
-  get title(): { [key: string]: string } {
-    return this.data.titles;
-  }
+  public min: number = 0;
+  public title: string[] = [];
+  public units: string[] = [];
+  public config: AppConfig | null = null;
 
-  get unit(): { [key: string]: string } {
-    return this.data.units;
-  }
-
-  public getColor: (d: number) => string = (d) => 'best';
-
-  @Output() cleared: EventEmitter<void> = new EventEmitter<void>();
-
-  public readonly list$:Observable<any>;
+  @Output() cleared: EventEmitter<AppConfig> = new EventEmitter<AppConfig>();
 
   constructor(
-    @Inject(ListService) private _service: ListService
+    @Inject(CONFIG_ACTIVE) private readonly _activeConfig$: ConfigActive,
+    @Inject(CONFIG_PLUGIN) private readonly _pluginList: ListLikePlugin[],
   ) {
-    this.list$ = this._service.list$;
+    this._activeConfig$.pipe(
+      map((config: AppConfig) => {
+        const find = this._pluginList.find(plugin => plugin.support(config));
+
+        return {...find!.getList(), config};
+      })
+    ).subscribe(({title, unit, config}) => {
+      this.title = title;
+      this.units = unit;
+      this.config = config;
+    });
   }
 
-  public trackBy(index: number, item: any): number {
+  public trackBy(index: number): number {
     return index
   }
 
   public onClear(event: MouseEvent): void {
     event.preventDefault();
 
-    this.cleared.emit();
+    this.cleared.emit(this.config as AppConfig);
   }
 }

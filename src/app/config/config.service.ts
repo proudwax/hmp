@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Observable, timer} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {mapTo} from 'rxjs/operators';
 
 export interface AppList {
   columns: string[];
@@ -12,12 +12,12 @@ export type AppConfig = string;
 
 
 const CONFIG_LIST: AppConfig[] = [
-  'weight', 'weight-kg', 'amount'
+  'weight-kg', 'amount'
 ]
 
 @Injectable()
 export class ConfigService {
   config$: Observable<AppConfig[]> = timer(500).pipe(
-    map(_ => CONFIG_LIST)
+    mapTo(CONFIG_LIST)
   );
 }

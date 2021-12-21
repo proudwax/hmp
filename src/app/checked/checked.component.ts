@@ -1,28 +1,20 @@
 import {ChangeDetectionStrategy, Component, Inject, OnDestroy} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import {Observable, Subject} from "rxjs";
-import {finalize, map, takeUntil, tap} from 'rxjs/operators';
+import {map, takeUntil, tap} from 'rxjs/operators';
 import {CONFIG_LIST, CONFIG_PLUGIN, ConfigList} from '../config/config.token';
 import {ConfigActiveService} from '../config/config-active.service';
 import {AppConfig} from '../config/config.service';
-import {CHECKED_PLUGIN} from "./checked.token";
 import {CheckedItem, CheckedLikePlugin} from "./checked.type";
-import {AMOUNT_PROVIDER} from "./plugins/amount/amount.provider";
-import {WEIGHT_PROVIDER} from "./plugins/weight/weight.provider";
 import {APP_STORAGE} from "../storage/storage.providers";
 import {AbstractStorage} from "../storage/abstract-storage";
-import {WEIGHT_KG_PROVIDER} from "./plugins/weight-kg/weight-kg.provider";
 
 @Component({
   selector: 'app-checked',
   templateUrl: './checked.component.html',
   styleUrls: ['./checked.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    // AMOUNT_PROVIDER,
-    // WEIGHT_PROVIDER,
-    // WEIGHT_KG_PROVIDER
-  ]
+
 })
 export class CheckedComponent implements OnDestroy {
   private readonly _destroyed$: Subject<void> = new Subject<void>();
@@ -43,8 +35,8 @@ export class CheckedComponent implements OnDestroy {
 
     this.list$ = this.config$.pipe(
       map((configList: AppConfig[]) => this._createListCheckbox(configList, this.pluginList)),
-      tap((checkedList: CheckedItem[]) => this.form.patchValue({value: active || checkedList[0].value})),
-      finalize(() => console.log('CheckedComponent => finalize => list$'))
+      tap((checkedList: CheckedItem[]) =>
+        this.form.patchValue({value: this._getStartConfigActive(active, checkedList)}))
     );
 
     this.form.valueChanges.pipe(
@@ -73,6 +65,16 @@ export class CheckedComponent implements OnDestroy {
   private _setConfigActive(config: string): void {
     this._storage.setItem(this._storeKey, config);
     this._configActive.changeConfig(config);
+  }
+
+  private _getStartConfigActive(active: AppConfig | null, configList: CheckedItem[]): string {
+    const list = configList.map(item => item.value);
+
+    if (active && list.includes(active)) {
+      return active;
+    }
+
+    return list[0];
   }
 
   ngOnDestroy(): void {

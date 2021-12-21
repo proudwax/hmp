@@ -7,28 +7,13 @@ import {
   OnDestroy,
   Output
 } from '@angular/core';
-import {AbstractControl, FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
-import {TuiPluralize} from '@taiga-ui/core';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  map,
-  shareReplay,
-  startWith,
-  switchMap,
-  takeUntil,
-  tap
-} from 'rxjs/operators';
-import {CalculateService} from './calculate.service';
+import {AbstractControl, FormArray, FormBuilder, FormControl} from '@angular/forms';
+import {distinctUntilChanged, map, shareReplay, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {Observable, Subject} from 'rxjs';
-import {AMOUNT_PROVIDER} from "./plugins/amount/amount.provider";
-import {WEIGHT_PROVIDER} from "./plugins/weight/weight.provider";
 import {CONFIG_ACTIVE, ConfigActive} from "../config/config-active.token";
-import {CALCULATE_PLUGIN} from "./calculate.token";
 import {CalculateItem, CalculateLikePlugin, CalculateSaved} from "./calculate.type";
 import {AppConfig} from "../config/config.service";
 import {CalculateForm} from "./calculate.form";
-import {WEIGHT_KG_PROVIDER} from "./plugins/weight-kg/weight.provider";
 import {CONFIG_PLUGIN} from "../config/config.token";
 
 @Component({
@@ -37,12 +22,6 @@ import {CONFIG_PLUGIN} from "../config/config.token";
   templateUrl: './calculate.component.html',
   styleUrls: ['./calculate.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    // AMOUNT_PROVIDER,
-    // WEIGHT_PROVIDER,
-    // WEIGHT_KG_PROVIDER,
-    {provide: CalculateService, useClass: CalculateService}
-  ]
 })
 export class CalculateComponent implements OnDestroy {
   private _destroyed$: Subject<void> = new Subject<void>();
