@@ -5,16 +5,17 @@ import {tuiFadeIn} from "@taiga-ui/core";
 import {AppConfig} from "./config/config.service";
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    {
-      provide: AppService, useClass: AppService
-    }
-  ],
-  animations: [tuiFadeIn]
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [
+        {
+            provide: AppService, useClass: AppService
+        }
+    ],
+    animations: [tuiFadeIn],
+    standalone: false
 })
 export class AppComponent {
   public data$: Observable<number[][]>;

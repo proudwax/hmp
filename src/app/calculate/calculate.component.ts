@@ -17,11 +17,12 @@ import {CalculateForm} from "./calculate.form";
 import {CONFIG_PLUGIN} from "../config/config.token";
 
 @Component({
-  selector: 'app-calculate',
-  exportAs: 'appCalculate',
-  templateUrl: './calculate.component.html',
-  styleUrls: ['./calculate.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-calculate',
+    exportAs: 'appCalculate',
+    templateUrl: './calculate.component.html',
+    styleUrls: ['./calculate.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class CalculateComponent implements OnDestroy {
   private _destroyed$: Subject<void> = new Subject<void>();

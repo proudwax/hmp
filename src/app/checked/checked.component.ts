@@ -10,11 +10,11 @@ import {APP_STORAGE} from "../storage/storage.providers";
 import {AbstractStorage} from "../storage/abstract-storage";
 
 @Component({
-  selector: 'app-checked',
-  templateUrl: './checked.component.html',
-  styleUrls: ['./checked.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-
+    selector: 'app-checked',
+    templateUrl: './checked.component.html',
+    styleUrls: ['./checked.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class CheckedComponent implements OnDestroy {
   private readonly _destroyed$: Subject<void> = new Subject<void>();

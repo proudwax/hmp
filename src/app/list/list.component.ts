@@ -7,11 +7,12 @@ import {map} from "rxjs/operators";
 import {ListLikePlugin} from "./list.type";
 
 @Component({
-  selector: 'app-list',
-  templateUrl: './list.component.html',
-  styleUrls: ['./list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [tuiFadeIn, tuiFadeInBottom, tuiHeightCollapse]
+    selector: 'app-list',
+    templateUrl: './list.component.html',
+    styleUrls: ['./list.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    animations: [tuiFadeIn, tuiFadeInBottom, tuiHeightCollapse],
+    standalone: false
 })
 export class ListComponent {
   @Input()
