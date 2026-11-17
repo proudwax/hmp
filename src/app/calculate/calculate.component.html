@@ -3,15 +3,18 @@
     <div tuiGroup formArrayName="calculate">
       @for (_ of calculate.controls; track trackByIndex(i, _); let i = $index) {
         <div>
-          <tui-input-number
+          <tui-textfield
             class="tui-group__inherit-item"
-            [formControlName]="i"
-            [tuiTextfieldPostfix]="data.unit[i]"
+            
+            
             tuiTextfieldSize="m"
-          [tuiTextfieldLabelOutside]="true"></tui-input-number>
+          >
+<input tuiInputNumber [formControlName]="i" [postfix]="data.unit[i]" />
+</tui-textfield>
         </div>
       }
-      <button
+      <!-- TODO: (Taiga UI migration) `tui-group__auto-width-item` was removed in v5. Re-create it on the child element with CSS: `flex: 0 0 auto; min-inline-size: auto;`. -->
+<button
         class="tui-group__auto-width-item"
         tuiIconButton
         type="submit"
@@ -21,7 +24,8 @@
         [disabled]="buttonDisabled"
         (click)="onSave($event)"
       ></button>
-      <button
+      <!-- TODO: (Taiga UI migration) `tui-group__auto-width-item` was removed in v5. Re-create it on the child element with CSS: `flex: 0 0 auto; min-inline-size: auto;`. -->
+<button
         class="tui-group__auto-width-item"
         tuiIconButton
         type="button"

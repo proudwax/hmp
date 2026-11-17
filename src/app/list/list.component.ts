@@ -1,6 +1,9 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Inject, Input, Output} from '@angular/core';
 import {CONFIG_PLUGIN} from "../config/config.token";
 import {CONFIG_ACTIVE, ConfigActive} from "../config/config-active.token";
+// TODO: (Taiga UI migration) tuiHeightCollapse has been removed. Angular animations are replaced with CSS animations + TuiAnimated directive from @taiga-ui/cdk. See https://taiga-ui.dev/directives/animated
+// TODO: (Taiga UI migration) tuiFadeIn has been removed. Angular animations are replaced with CSS animations + TuiAnimated directive from @taiga-ui/cdk. See https://taiga-ui.dev/directives/animated
+// TODO: (Taiga UI migration) tuiFadeInBottom has been removed. Angular animations are replaced with CSS animations + TuiAnimated directive from @taiga-ui/cdk. See https://taiga-ui.dev/directives/animated
 import {tuiFadeIn, tuiFadeInBottom, tuiHeightCollapse, TuiNumberFormatSettings} from "@taiga-ui/core";
 import {AppConfig} from "../config/config.service";
 import {map} from "rxjs/operators";
