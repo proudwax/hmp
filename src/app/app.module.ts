@@ -1,3 +1,4 @@
+import { TuiTextfieldControllerModule } from "@taiga-ui/core";
 import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -33,8 +34,8 @@ import {CONFIG_PROVIDER} from "./config/config.provider";
       // or after 30 seconds (whichever comes first).
       registrationStrategy: 'registerWhenStable:30000'
     }),
-
-  ],
+      TuiTextfieldControllerModule
+],
   providers: [
     STORAGE_PROVIDER,
     CONFIG_PROVIDER

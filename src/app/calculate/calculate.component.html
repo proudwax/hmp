@@ -4,7 +4,7 @@
       <tui-input-number
         class="tui-group__inherit-item"
         [formControlName]="i"
-        [postfix]="data.unit[i]"
+        [tuiTextfieldPostfix]="data.unit[i]"
         tuiTextfieldSize="m"
         [tuiTextfieldLabelOutside]="true"></tui-input-number>
     </div>
@@ -13,7 +13,7 @@
       tuiIconButton
       type="submit"
       size="m"
-      icon="tuiIconPlus"
+      iconStart="@tui.plus"
       appearance="secondary"
       [disabled]="buttonDisabled"
       (click)="onSave($event)"
@@ -23,7 +23,7 @@
       tuiIconButton
       type="button"
       size="m"
-      icon="tuiIconCloseLarge"
+      iconStart="@tui.x"
       [disabled]="buttonDisabled"
       (click)="onReset($event)"
     ></button>

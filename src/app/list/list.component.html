@@ -1,3 +1,4 @@
+<!-- TODO: (Taiga UI migration) tuiFormatNumber pipe API has been changed. Learn how to migrate decimalLimit, decimal, zeroPadding: https://github.com/taiga-family/taiga-ui/issues/8335#migration -->
 <section class="list" *ngIf="data.length" @tuiHeightCollapse>
   <div class="list__table-wrapper tui-space_bottom-3">
     <table class="list__table table tui-table">
@@ -14,7 +15,7 @@
     </table>
   </div>
   <div class="list__action">
-    <button tuiButton size="s" type="button" appearance="primary" (click)="onClear($event)" icon="tuiIconTrash">
+    <button tuiButton size="s" type="button" appearance="primary" (click)="onClear($event)" iconStart="@tui.trash">
       Очистить
     </button>
   </div>

@@ -1,16 +1,17 @@
+import { TuiTextfieldControllerModule, TuiInputNumberModule, TuiInputSliderModule } from "@taiga-ui/legacy";
 import {NgModule} from '@angular/core';
-import {TuiInputNumberModule, TuiInputSliderModule, TuiRadioBlockModule} from '@taiga-ui/kit';
-import {TuiButtonModule, TuiFormatNumberPipeModule, TuiGroupModule, TuiTextfieldControllerModule} from '@taiga-ui/core';
+import { TuiBlock, TuiRadio } from '@taiga-ui/kit';
+import { TuiFormatNumberPipe, TuiGroup, TuiButton } from '@taiga-ui/core';
 
 @NgModule({
   exports: [
     TuiInputSliderModule,
     TuiInputNumberModule,
     TuiTextfieldControllerModule,
-    TuiGroupModule,
-    TuiButtonModule,
-    TuiFormatNumberPipeModule,
-    TuiRadioBlockModule
+    TuiGroup,
+    TuiButton,
+    TuiFormatNumberPipe,
+    TuiBlock, ...TuiRadio
   ]
 })
 export class TaigaUiModule {
