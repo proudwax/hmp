@@ -8,7 +8,7 @@
       <tr class="tui-table__tr table__tr" [class.best]="min === item[2]" *ngFor="let item of data; index as index; trackBy: trackBy">
         <td class="tui-table__td table__td">{{index + 1}}.</td>
         <td class="tui-table__td table__td" *ngFor="let value of item; index as i; trackBy: trackBy">
-          {{value | tuiFormatNumber : null : ','}} <small>{{units[i]}}</small>
+          {{value | tuiFormatNumber : numberFormat}} <small>{{units[i]}}</small>
         </td>
       </tr>
     </table>

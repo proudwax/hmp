@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Inject, Input, Output} from '@angular/core';
 import {CONFIG_PLUGIN} from "../config/config.token";
 import {CONFIG_ACTIVE, ConfigActive} from "../config/config-active.token";
-import {tuiFadeIn, tuiFadeInBottom, tuiHeightCollapse} from "@taiga-ui/core";
+import {tuiFadeIn, tuiFadeInBottom, tuiHeightCollapse, TuiNumberFormatSettings} from "@taiga-ui/core";
 import {AppConfig} from "../config/config.service";
 import {map} from "rxjs/operators";
 import {ListLikePlugin} from "./list.type";
@@ -31,6 +31,10 @@ export class ListComponent {
   public title: string[] = [];
   public units: string[] = [];
   public config: AppConfig | null = null;
+  public readonly numberFormat: Partial<TuiNumberFormatSettings> = {
+    decimalLimit: Infinity,
+    decimalSeparator: ','
+  };
 
   @Output() cleared: EventEmitter<AppConfig> = new EventEmitter<AppConfig>();
 
