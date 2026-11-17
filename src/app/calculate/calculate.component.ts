@@ -7,7 +7,7 @@ import {
   OnDestroy,
   Output
 } from '@angular/core';
-import {AbstractControl, FormArray, FormBuilder, FormControl} from '@angular/forms';
+import {AbstractControl, UntypedFormArray, UntypedFormBuilder, UntypedFormControl} from '@angular/forms';
 import {distinctUntilChanged, map, shareReplay, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {Observable, Subject} from 'rxjs';
 import {CONFIG_ACTIVE, ConfigActive} from "../config/config-active.token";
@@ -31,12 +31,12 @@ export class CalculateComponent implements OnDestroy {
   public buttonDisabled: boolean = true;
 
 
-  public get calculate(): FormArray {
-    return this.form.get('calculate') as FormArray;
+  public get calculate(): UntypedFormArray {
+    return this.form.get('calculate') as UntypedFormArray;
   }
 
-  public get total(): FormControl {
-    return this.form.get('total') as FormControl
+  public get total(): UntypedFormControl {
+    return this.form.get('total') as UntypedFormControl
   }
 
   @Output() readonly changes: EventEmitter<number> = new EventEmitter<number>();
@@ -45,7 +45,7 @@ export class CalculateComponent implements OnDestroy {
   constructor(
     @Inject(CONFIG_ACTIVE) private readonly _activeConfig$: ConfigActive,
     @Inject(CONFIG_PLUGIN) private readonly pluginList: CalculateLikePlugin[],
-    @Inject(FormBuilder) private readonly _fb: FormBuilder,
+    @Inject(UntypedFormBuilder) private readonly _fb: UntypedFormBuilder,
     @Inject(ChangeDetectorRef) private readonly _cdr: ChangeDetectorRef
   ) {
     this.form = new CalculateForm({
@@ -104,7 +104,7 @@ export class CalculateComponent implements OnDestroy {
     this.calculate.clear();
 
     for (let i = 0; i < length; i++) {
-      (this.form.get('calculate')! as FormArray).push(this._fb.control(0))
+      (this.form.get('calculate')! as UntypedFormArray).push(this._fb.control(0))
     }
   }
 

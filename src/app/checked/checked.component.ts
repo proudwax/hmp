@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Inject, OnDestroy} from '@angular/core';
-import {FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {Observable, Subject} from "rxjs";
 import {map, takeUntil, tap} from 'rxjs/operators';
 import {CONFIG_LIST, CONFIG_PLUGIN, ConfigList} from '../config/config.token';
@@ -21,8 +21,8 @@ export class CheckedComponent implements OnDestroy {
   private readonly _storeKey = 'configActive';
 
   public readonly list$: Observable<CheckedItem[]>;
-  public readonly form: FormGroup = new FormGroup({
-    value: new FormControl(''),
+  public readonly form: UntypedFormGroup = new UntypedFormGroup({
+    value: new UntypedFormControl(''),
   });
 
   constructor(

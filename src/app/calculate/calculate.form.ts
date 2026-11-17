@@ -1,6 +1,6 @@
-import {AbstractControl, AbstractControlOptions, AsyncValidatorFn, FormGroup, ValidatorFn} from "@angular/forms";
+import {AbstractControl, AbstractControlOptions, AsyncValidatorFn, UntypedFormGroup, ValidatorFn} from "@angular/forms";
 
-export class CalculateForm extends FormGroup {
+export class CalculateForm extends UntypedFormGroup {
   constructor(
     controls: { [p: string]: AbstractControl },
     validatorOrOpts?: ValidatorFn | ValidatorFn[] | AbstractControlOptions | null,
