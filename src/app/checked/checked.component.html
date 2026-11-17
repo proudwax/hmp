@@ -1,14 +1,14 @@
 <section class="tui-container tui-container_adaptive">
   <form class="group" [formGroup]="form">
     <div tuiGroup class="group" [collapsed]="true">
-     <label *ngFor="let item of (list$ | async); trackBy: trackByItem" tuiBlock="m"> <input tuiRadio type="radio"
-        
-        
-        formControlName="value"
-        [value]="item.value"
-        >
-        {{item.text}}
-      </label>
+      @for (item of (list$ | async); track trackByItem($index, item)) {
+        <label tuiBlock="m"> <input tuiRadio type="radio"
+          formControlName="value"
+          [value]="item.value"
+          >
+          {{item.text}}
+        </label>
+      }
     </div>
   </form>
 </section>

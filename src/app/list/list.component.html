@@ -1,22 +1,30 @@
 <!-- TODO: (Taiga UI migration) tuiFormatNumber pipe API has been changed. Learn how to migrate decimalLimit, decimal, zeroPadding: https://github.com/taiga-family/taiga-ui/issues/8335#migration -->
-<section class="list" *ngIf="data.length" @tuiHeightCollapse>
-  <div class="list__table-wrapper tui-space_bottom-3">
-    <table class="list__table table tui-table">
-      <tr class="tui-table__tr table__tr table__sticky shadow">
-        <td class="tui-table__td table__td"></td>
-        <td class="tui-table__td table__td" *ngFor="let item of title; trackBy: trackBy">{{item}}</td>
-      </tr>
-      <tr class="tui-table__tr table__tr" [class.best]="min === item[2]" *ngFor="let item of data; index as index; trackBy: trackBy">
-        <td class="tui-table__td table__td">{{index + 1}}.</td>
-        <td class="tui-table__td table__td" *ngFor="let value of item; index as i; trackBy: trackBy">
-          {{value | tuiFormatNumber : numberFormat}} <small>{{units[i]}}</small>
-        </td>
-      </tr>
-    </table>
-  </div>
-  <div class="list__action">
-    <button tuiButton size="s" type="button" appearance="primary" (click)="onClear($event)" iconStart="@tui.trash">
-      Очистить
-    </button>
-  </div>
-</section>
+@if (data.length) {
+  <section class="list" @tuiHeightCollapse>
+    <div class="list__table-wrapper tui-space_bottom-3">
+      <table class="list__table table tui-table">
+        <tr class="tui-table__tr table__tr table__sticky shadow">
+          <td class="tui-table__td table__td"></td>
+          @for (item of title; track trackBy($index, item)) {
+            <td class="tui-table__td table__td">{{item}}</td>
+          }
+        </tr>
+        @for (item of data; track trackBy(index, item); let index = $index) {
+          <tr class="tui-table__tr table__tr" [class.best]="min === item[2]">
+            <td class="tui-table__td table__td">{{index + 1}}.</td>
+            @for (value of item; track trackBy(i, value); let i = $index) {
+              <td class="tui-table__td table__td">
+                {{value | tuiFormatNumber : numberFormat}} <small>{{units[i]}}</small>
+              </td>
+            }
+          </tr>
+        }
+      </table>
+    </div>
+    <div class="list__action">
+      <button tuiButton size="s" type="button" appearance="primary" (click)="onClear($event)" iconStart="@tui.trash">
+        Очистить
+      </button>
+    </div>
+  </section>
+}

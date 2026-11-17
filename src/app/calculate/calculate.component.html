@@ -1,31 +1,35 @@
-<form class="tui-container tui-container_adaptive" *ngIf="(list$ | async) as data" [formGroup]="form" (ngSubmit)="onSubmit($event)">
-  <div tuiGroup formArrayName="calculate">
-    <div *ngFor="let _ of calculate.controls; index as i; trackBy: trackByIndex">
-      <tui-input-number
-        class="tui-group__inherit-item"
-        [formControlName]="i"
-        [tuiTextfieldPostfix]="data.unit[i]"
-        tuiTextfieldSize="m"
-        [tuiTextfieldLabelOutside]="true"></tui-input-number>
+@if ((list$ | async); as data) {
+  <form class="tui-container tui-container_adaptive" [formGroup]="form" (ngSubmit)="onSubmit($event)">
+    <div tuiGroup formArrayName="calculate">
+      @for (_ of calculate.controls; track trackByIndex(i, _); let i = $index) {
+        <div>
+          <tui-input-number
+            class="tui-group__inherit-item"
+            [formControlName]="i"
+            [tuiTextfieldPostfix]="data.unit[i]"
+            tuiTextfieldSize="m"
+          [tuiTextfieldLabelOutside]="true"></tui-input-number>
+        </div>
+      }
+      <button
+        class="tui-group__auto-width-item"
+        tuiIconButton
+        type="submit"
+        size="m"
+        iconStart="@tui.plus"
+        appearance="secondary"
+        [disabled]="buttonDisabled"
+        (click)="onSave($event)"
+      ></button>
+      <button
+        class="tui-group__auto-width-item"
+        tuiIconButton
+        type="button"
+        size="m"
+        iconStart="@tui.x"
+        [disabled]="buttonDisabled"
+        (click)="onReset($event)"
+      ></button>
     </div>
-    <button
-      class="tui-group__auto-width-item"
-      tuiIconButton
-      type="submit"
-      size="m"
-      iconStart="@tui.plus"
-      appearance="secondary"
-      [disabled]="buttonDisabled"
-      (click)="onSave($event)"
-    ></button>
-    <button
-      class="tui-group__auto-width-item"
-      tuiIconButton
-      type="button"
-      size="m"
-      iconStart="@tui.x"
-      [disabled]="buttonDisabled"
-      (click)="onReset($event)"
-    ></button>
-  </div>
-</form>
+  </form>
+}
