@@ -1,12 +1,15 @@
 <section class="tui-container tui-container_adaptive">
   <form class="group" [formGroup]="form">
-    <div tuiGroup class="group" [collapsed]="true">
-      @for (item of (list$ | async); track trackByItem($index, item)) {
-        <label tuiBlock="m"> <input tuiRadio type="radio"
-          formControlName="value"
-          [value]="item.value"
-          >
-          {{item.text}}
+    <div tuiGroup size="m" class="group" [collapsed]="true">
+      @for (item of list$ | async; track trackByItem($index, item)) {
+        <label tuiBlock>
+          <input
+            tuiRadio
+            type="radio"
+            formControlName="value"
+            [value]="item.value"
+          />
+          {{ item.text }}
         </label>
       }
     </div>

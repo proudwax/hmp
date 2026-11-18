@@ -1,45 +1,57 @@
-import { TuiTextfieldControllerModule } from "@taiga-ui/core";
-import {NgModule} from '@angular/core';
-import {BrowserModule} from '@angular/platform-browser';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {
+  DOCUMENT,
+  inject,
+  NgModule,
+  provideAppInitializer,
+} from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
 
-import {AppComponent} from './app.component';
-import {ServiceWorkerModule} from '@angular/service-worker';
-import {environment} from '../environments/environment';
-import {TaigaUiModule} from './taiga-ui/taiga-ui.module';
-import {ReactiveFormsModule} from '@angular/forms';
-import {CalculateComponent} from './calculate/calculate.component';
-import {ListComponent} from './list/list.component';
-import {STORAGE_PROVIDER} from './storage/storage.providers';
+import { ReactiveFormsModule } from '@angular/forms';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { provideTaiga } from '@taiga-ui/core';
+import { environment } from '../environments/environment';
+import { AppComponent } from './app.component';
+import { CalculateComponent } from './calculate/calculate.component';
 import { CheckedComponent } from './checked/checked.component';
+import { CONFIG_PROVIDER } from './config/config.provider';
 import { CostComponent } from './cost/cost.component';
-import {CONFIG_PROVIDER} from "./config/config.provider";
+import { ListComponent } from './list/list.component';
+import { STORAGE_PROVIDER } from './storage/storage.providers';
+
+const initializer = () => {
+  const document = inject(DOCUMENT);
+  const theme = localStorage?.getItem('tuiDark');
+
+  if (
+    theme === 'true' ||
+    (!theme && matchMedia('(prefers-color-scheme: dark)').matches)
+  ) {
+    document.body.setAttribute('tuiTheme', 'dark');
+  }
+};
 
 @NgModule({
-  declarations: [
-    AppComponent,
+  declarations: [AppComponent],
+  imports: [
     CalculateComponent,
     ListComponent,
     CheckedComponent,
-    CostComponent
-  ],
-  imports: [
+    CostComponent,
     BrowserModule,
-    BrowserAnimationsModule,
     ReactiveFormsModule,
-    TaigaUiModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production,
       // Register the ServiceWorker as soon as the app is stable
       // or after 30 seconds (whichever comes first).
-      registrationStrategy: 'registerWhenStable:30000'
+      registrationStrategy: 'registerWhenStable:30000',
     }),
-      TuiTextfieldControllerModule
-],
+  ],
   providers: [
     STORAGE_PROVIDER,
-    CONFIG_PROVIDER
+    CONFIG_PROVIDER,
+    provideTaiga(),
+    provideAppInitializer(initializer),
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

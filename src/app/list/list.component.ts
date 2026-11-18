@@ -1,26 +1,33 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Inject, Input, Output} from '@angular/core';
-import {CONFIG_PLUGIN} from "../config/config.token";
-import {CONFIG_ACTIVE, ConfigActive} from "../config/config-active.token";
-// TODO: (Taiga UI migration) tuiHeightCollapse has been removed. Angular animations are replaced with CSS animations + TuiAnimated directive from @taiga-ui/cdk. See https://taiga-ui.dev/directives/animated
-// TODO: (Taiga UI migration) tuiFadeIn has been removed. Angular animations are replaced with CSS animations + TuiAnimated directive from @taiga-ui/cdk. See https://taiga-ui.dev/directives/animated
-// TODO: (Taiga UI migration) tuiFadeInBottom has been removed. Angular animations are replaced with CSS animations + TuiAnimated directive from @taiga-ui/cdk. See https://taiga-ui.dev/directives/animated
-import {tuiFadeIn, tuiFadeInBottom, tuiHeightCollapse, TuiNumberFormatSettings} from "@taiga-ui/core";
-import {AppConfig} from "../config/config.service";
-import {map} from "rxjs/operators";
-import {ListLikePlugin} from "./list.type";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Inject,
+  Input,
+  Output,
+} from '@angular/core';
+import { TuiTable } from '@taiga-ui/addon-table';
+import { TuiButton, TuiNumberFormatSettings } from '@taiga-ui/core';
+import { TuiFormatNumberPipe } from '@taiga-ui/kit';
+import { TuiCardLarge } from '@taiga-ui/layout';
+import { map } from 'rxjs/operators';
+import { CONFIG_ACTIVE, ConfigActive } from '../config/config-active.token';
+import { AppConfig } from '../config/config.service';
+import { CONFIG_PLUGIN } from '../config/config.token';
+import { ListLikePlugin } from './list.type';
 
 @Component({
-    selector: 'app-list',
-    templateUrl: './list.component.html',
-    styleUrls: ['./list.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    animations: [tuiFadeIn, tuiFadeInBottom, tuiHeightCollapse],
-    standalone: false
+  selector: 'app-list',
+  templateUrl: './list.component.html',
+  styleUrls: ['./list.component.scss'],
+  imports: [TuiFormatNumberPipe, TuiButton, TuiTable, TuiCardLarge],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
 })
 export class ListComponent {
   @Input()
   public set data(value: number[][]) {
-    this.min = Math.min(...value.map(item => item[2]));
+    this.min = Math.min(...value.map((item) => item[2]));
 
     this._data = value;
   }
@@ -36,8 +43,8 @@ export class ListComponent {
   public units: string[] = [];
   public config: AppConfig | null = null;
   public readonly numberFormat: Partial<TuiNumberFormatSettings> = {
-    decimalLimit: Infinity,
-    decimalSeparator: ','
+    precision: Infinity,
+    decimalSeparator: ',',
   };
 
   @Output() cleared: EventEmitter<AppConfig> = new EventEmitter<AppConfig>();
@@ -46,21 +53,25 @@ export class ListComponent {
     @Inject(CONFIG_ACTIVE) private readonly _activeConfig$: ConfigActive,
     @Inject(CONFIG_PLUGIN) private readonly _pluginList: ListLikePlugin[],
   ) {
-    this._activeConfig$.pipe(
-      map((config: AppConfig) => {
-        const find = this._pluginList.find(plugin => plugin.support(config));
+    this._activeConfig$
+      .pipe(
+        map((config: AppConfig) => {
+          const find = this._pluginList.find((plugin) =>
+            plugin.support(config),
+          );
 
-        return {...find!.getList(), config};
-      })
-    ).subscribe(({title, unit, config}) => {
-      this.title = title;
-      this.units = unit;
-      this.config = config;
-    });
+          return { ...find!.getList(), config };
+        }),
+      )
+      .subscribe(({ title, unit, config }) => {
+        this.title = title;
+        this.units = unit;
+        this.config = config;
+      });
   }
 
-  public trackBy(index: number): number {
-    return index
+  public trackBy(index: number, item: any): number {
+    return index;
   }
 
   public onClear(event: MouseEvent): void {

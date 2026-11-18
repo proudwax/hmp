@@ -1,35 +1,35 @@
-@if ((list$ | async); as data) {
-  <form class="tui-container tui-container_adaptive" [formGroup]="form" (ngSubmit)="onSubmit($event)">
+@if (list$ | async; as data) {
+  <form
+    class="tui-container tui-container_adaptive"
+    [formGroup]="form"
+    (ngSubmit)="onSubmit($event)"
+  >
     <div tuiGroup formArrayName="calculate">
       @for (_ of calculate.controls; track trackByIndex(i, _); let i = $index) {
-        <div>
-          <tui-textfield
-            class="tui-group__inherit-item"
-            
-            
-            tuiTextfieldSize="m"
-          >
-<input tuiInputNumber [formControlName]="i" [postfix]="data.unit[i]" />
-</tui-textfield>
-        </div>
+        <tui-textfield class="tui-group__inherit-item" tuiTextfieldSize="l">
+          <input
+            tuiInputNumber
+            [formControlName]="i"
+            [postfix]="data.unit[i]"
+          />
+        </tui-textfield>
       }
-      <!-- TODO: (Taiga UI migration) `tui-group__auto-width-item` was removed in v5. Re-create it on the child element with CSS: `flex: 0 0 auto; min-inline-size: auto;`. -->
-<button
+      <button
         class="tui-group__auto-width-item"
         tuiIconButton
         type="submit"
-        size="m"
+        size="l"
         iconStart="@tui.plus"
         appearance="secondary"
         [disabled]="buttonDisabled"
         (click)="onSave($event)"
       ></button>
-      <!-- TODO: (Taiga UI migration) `tui-group__auto-width-item` was removed in v5. Re-create it on the child element with CSS: `flex: 0 0 auto; min-inline-size: auto;`. -->
-<button
+
+      <button
         class="tui-group__auto-width-item"
         tuiIconButton
         type="button"
-        size="m"
+        size="l"
         iconStart="@tui.x"
         [disabled]="buttonDisabled"
         (click)="onReset($event)"

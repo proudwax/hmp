@@ -20,6 +20,7 @@
     "@angular/platform-browser-dynamic": "^22.2.6",
     "@angular/router": "^22.2.6",
     "@angular/service-worker": "^22.2.6",
+    "@taiga-ui/addon-table": "^5.33.0",
     "@taiga-ui/cdk": "5.33.0",
     "@taiga-ui/core": "5.33.0",
     "@taiga-ui/event-plugins": "^5.0.0",

@@ -1,30 +1,42 @@
-<!-- TODO: (Taiga UI migration) tuiFormatNumber pipe API has been changed. Learn how to migrate decimalLimit, decimal, zeroPadding: https://github.com/taiga-family/taiga-ui/issues/8335#migration -->
 @if (data.length) {
-  <section class="list" @tuiHeightCollapse>
-    <div class="list__table-wrapper tui-space_bottom-3">
-      <table class="list__table table tui-table">
-        <tr class="tui-table__tr table__tr table__sticky shadow">
-          <td class="tui-table__td table__td"></td>
-          @for (item of title; track trackBy($index, item)) {
-            <td class="tui-table__td table__td">{{item}}</td>
-          }
-        </tr>
-        @for (item of data; track trackBy(index, item); let index = $index) {
-          <tr class="tui-table__tr table__tr" [class.best]="min === item[2]">
-            <td class="tui-table__td table__td">{{index + 1}}.</td>
-            @for (value of item; track trackBy(i, value); let i = $index) {
-              <td class="tui-table__td table__td">
-                {{value | tuiFormatNumber : numberFormat}} <small>{{units[i]}}</small>
-              </td>
+  <div tuiCardLarge>
+    <section class="list">
+      <table tuiTable>
+        <thead>
+          <tr>
+            <th tuiTh></th>
+            @for (item of title; track trackBy($index, item)) {
+              <th tuiTh>{{ item }}</th>
             }
           </tr>
-        }
+        </thead>
+        <tbody tuiTbody>
+          @for (item of data; track trackBy(index, item); let index = $index) {
+            <tr>
+              <td tuiTd>{{ index + 1 }}.</td>
+              @for (value of item; track trackBy(i, value); let i = $index) {
+                <td tuiTd>
+                  {{ value | tuiFormatNumber: numberFormat }}
+                  <small>{{ units[i] }}</small>
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
       </table>
-    </div>
-    <div class="list__action">
-      <button tuiButton size="s" type="button" appearance="primary" (click)="onClear($event)" iconStart="@tui.trash">
-        Очистить
-      </button>
-    </div>
-  </section>
+
+      <div class="list__action tui-space_top-4">
+        <button
+          tuiButton
+          size="m"
+          type="button"
+          appearance="primary"
+          (click)="onClear($event)"
+          iconStart="@tui.trash"
+        >
+          Очистить
+        </button>
+      </div>
+    </section>
+  </div>
 }

@@ -2,3 +2,12 @@
   width: 100%;
 }
 
+.tui-group {
+  &__auto-width-item {
+    flex: 0;
+  }
+}
+
+button {
+  box-shadow: var(--tui-shadow-small);
+}

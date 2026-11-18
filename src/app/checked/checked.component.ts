@@ -1,20 +1,33 @@
-import {ChangeDetectionStrategy, Component, Inject, OnDestroy} from '@angular/core';
-import {UntypedFormControl, UntypedFormGroup} from '@angular/forms';
-import {Observable, Subject} from "rxjs";
-import {map, takeUntil, tap} from 'rxjs/operators';
-import {CONFIG_LIST, CONFIG_PLUGIN, ConfigList} from '../config/config.token';
-import {ConfigActiveService} from '../config/config-active.service';
-import {AppConfig} from '../config/config.service';
-import {CheckedItem, CheckedLikePlugin} from "./checked.type";
-import {APP_STORAGE} from "../storage/storage.providers";
-import {AbstractStorage} from "../storage/abstract-storage";
+import { AsyncPipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Inject,
+  OnDestroy,
+} from '@angular/core';
+import {
+  ReactiveFormsModule,
+  UntypedFormControl,
+  UntypedFormGroup,
+} from '@angular/forms';
+import { TuiGroup, TuiRadio } from '@taiga-ui/core';
+import { TuiBlock } from '@taiga-ui/kit';
+import { Observable, Subject } from 'rxjs';
+import { map, takeUntil, tap } from 'rxjs/operators';
+import { ConfigActiveService } from '../config/config-active.service';
+import { AppConfig } from '../config/config.service';
+import { CONFIG_LIST, CONFIG_PLUGIN, ConfigList } from '../config/config.token';
+import { AbstractStorage } from '../storage/abstract-storage';
+import { APP_STORAGE } from '../storage/storage.providers';
+import { CheckedItem, CheckedLikePlugin } from './checked.type';
 
 @Component({
-    selector: 'app-checked',
-    templateUrl: './checked.component.html',
-    styleUrls: ['./checked.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'app-checked',
+  templateUrl: './checked.component.html',
+  styleUrls: ['./checked.component.scss'],
+  imports: [AsyncPipe, ReactiveFormsModule, TuiGroup, TuiBlock, TuiRadio],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
 })
 export class CheckedComponent implements OnDestroy {
   private readonly _destroyed$: Subject<void> = new Subject<void>();
@@ -29,19 +42,26 @@ export class CheckedComponent implements OnDestroy {
     @Inject(APP_STORAGE) private _storage: AbstractStorage,
     @Inject(CONFIG_LIST) public readonly config$: ConfigList,
     @Inject(CONFIG_PLUGIN) public readonly pluginList: CheckedLikePlugin[],
-    @Inject(ConfigActiveService) private _configActive: ConfigActiveService
+    @Inject(ConfigActiveService) private _configActive: ConfigActiveService,
   ) {
     const active = this._storage.getItem(this._storeKey);
 
     this.list$ = this.config$.pipe(
-      map((configList: AppConfig[]) => this._createListCheckbox(configList, this.pluginList)),
+      map((configList: AppConfig[]) =>
+        this._createListCheckbox(configList, this.pluginList),
+      ),
       tap((checkedList: CheckedItem[]) =>
-        this.form.patchValue({value: this._getStartConfigActive(active, checkedList)}))
+        this.form.patchValue({
+          value: this._getStartConfigActive(active, checkedList),
+        }),
+      ),
     );
 
-    this.form.valueChanges.pipe(
-      takeUntil(this._destroyed$)
-    ).subscribe(({value}: { value: string }) => this._setConfigActive(value));
+    this.form.valueChanges
+      .pipe(takeUntil(this._destroyed$))
+      .subscribe(({ value }: { value: string }) =>
+        this._setConfigActive(value),
+      );
   }
 
   public trackByItem(index: number, item: CheckedItem): string {
@@ -50,9 +70,12 @@ export class CheckedComponent implements OnDestroy {
 
   private _createListCheckbox(
     configList: AppConfig[],
-    pluginList: CheckedLikePlugin[]): CheckedItem[] {
+    pluginList: CheckedLikePlugin[],
+  ): CheckedItem[] {
     return configList.reduce((acc: CheckedItem[], item: AppConfig) => {
-      const find = pluginList.find((plugin: CheckedLikePlugin) => plugin.support(item));
+      const find = pluginList.find((plugin: CheckedLikePlugin) =>
+        plugin.support(item),
+      );
 
       if (find) {
         acc.push(find.getChecked());
@@ -67,8 +90,11 @@ export class CheckedComponent implements OnDestroy {
     this._configActive.changeConfig(config);
   }
 
-  private _getStartConfigActive(active: AppConfig | null, configList: CheckedItem[]): string {
-    const list = configList.map(item => item.value);
+  private _getStartConfigActive(
+    active: AppConfig | null,
+    configList: CheckedItem[],
+  ): string {
+    const list = configList.map((item) => item.value);
 
     if (active && list.includes(active)) {
       return active;

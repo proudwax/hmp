@@ -24,9 +24,7 @@
               "base": "dist/how-much-per"
             },
             "index": "src/index.html",
-            "polyfills": [
-              "src/polyfills.ts"
-            ],
+            "polyfills": ["src/polyfills.ts"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "baseHref": "/hmp/",
@@ -41,17 +39,14 @@
               }
             ],
             "styles": [
-              "node_modules/@taiga-ui/styles/taiga-ui-fonts.less",
-// TODO: (Taiga UI migration) Global styles will be removed in next major release. Include their source code in your project if you still require them: https://github.com/taiga-family/taiga-ui/blob/main/projects/legacy/styles/taiga-ui-global.less
-              "node_modules/@taiga-ui/legacy/styles/taiga-ui-global.less",
-              "src/styles.scss",
-              "node_modules/@taiga-ui/styles/taiga-ui-theme.less"
+              "@taiga-ui/styles/taiga-ui-theme.css",
+              "@taiga-ui/styles/taiga-ui-fonts.css",
+              "@taiga-ui/addon-mobile/styles/taiga-ui-mobile.css",
+              "src/styles.scss"
             ],
             "scripts": [],
             "serviceWorker": "ngsw-config.json",
-            "allowedCommonJsDependencies": [
-              "angular2-text-mask"
-            ],
+            "allowedCommonJsDependencies": ["angular2-text-mask"],
             "browser": "src/main.ts"
           },
           "configurations": {
@@ -98,9 +93,7 @@
                 "src/assets",
                 "src/manifest.webmanifest"
               ],
-              "styles": [
-                "src/styles.scss"
-              ],
+              "styles": ["src/styles.scss"],
               "polyfills": "src/polyfills.ts"
             }
           },
@@ -128,16 +121,9 @@
           "builder": "@angular/build:unit-test",
           "options": {
             "tsConfig": "tsconfig.spec.json",
-            "reporters": [
-              "default"
-            ],
-            "coverageReporters": [
-              "html",
-              "text-summary"
-            ],
-            "setupFiles": [
-              "src/test.ts"
-            ],
+            "reporters": ["default"],
+            "coverageReporters": ["html", "text-summary"],
+            "setupFiles": ["src/test.ts"],
             "buildTarget": ":build:testing",
             "runner": "vitest"
           }
@@ -170,5 +156,8 @@
     "@schematics/angular:resolver": {
       "typeSeparator": "."
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }
