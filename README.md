@@ -1,27 +1,39 @@
 # HowMuchPer
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.1.4.
+HowMuchPer is built with Angular 22. [GitHub Pages site](https://proudwax.github.io/hmp/)
+
+## Getting started
+
+Use Node.js 24.15.0 or a newer 24.x release to match the GitHub Actions workflow. Install dependencies from the lockfile.
+
+```sh
+npm ci
+```
 
 ## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Run `npm start` and open [http://localhost:4200/hmp/](http://localhost:4200/hmp/). The app reloads when source files change.
 
 ## Code scaffolding
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Run `npm run ng -- generate component component-name` to generate a new component. Use `npm run ng -- help` for other Angular CLI commands.
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+Run `npm run build` to create a production build in `dist/how-much-per/`. The build uses `/hmp/` as its base path.
 
 ## Running unit tests
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Run `npm test -- --watch=false` to run the unit tests once with Vitest.
 
-## Running end-to-end tests
+## Deploying to GitHub Pages
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+The [deployment workflow](.github/workflows/deploy.yml) runs on every push to `main`. It builds the app, copies `index.html` to `404.html` as a fallback, and pushes the entire `dist/how-much-per/` directory to `gh-pages`.
 
-## Further help
+Configure the repository once.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+1. In **Settings → Pages**, select **Deploy from a branch**, then choose **gh-pages** and **/(root)**.
+2. Add the public half of a dedicated SSH key pair in **Settings → Deploy keys** and enable **Allow write access**.
+3. Save the private half as an Actions secret named `ACTIONS_DEPLOY_KEY` in **Settings → Secrets and variables → Actions**.
+
+After pushing to `main`, check the **Deploy to GitHub Pages** run in the repository's **Actions** tab.
