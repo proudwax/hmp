@@ -29,11 +29,3 @@ Run `npm test -- --watch=false` to run the unit tests once with Vitest.
 ## Deploying to GitHub Pages
 
 The [deployment workflow](.github/workflows/deploy.yml) runs on every push to `main`. It builds the app, copies `index.html` to `404.html` as a fallback, and pushes the entire `dist/how-much-per/` directory to `gh-pages`.
-
-Configure the repository once.
-
-1. In **Settings → Pages**, select **Deploy from a branch**, then choose **gh-pages** and **/(root)**.
-2. Add the public half of a dedicated SSH key pair in **Settings → Deploy keys** and enable **Allow write access**.
-3. Save the private half as an Actions secret named `ACTIONS_DEPLOY_KEY` in **Settings → Secrets and variables → Actions**.
-
-After pushing to `main`, check the **Deploy to GitHub Pages** run in the repository's **Actions** tab.
