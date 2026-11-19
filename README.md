@@ -22,10 +22,6 @@ Run `npm run ng -- generate component component-name` to generate a new componen
 
 Run `npm run build` to create a production build in `dist/how-much-per/`. The build uses `/hmp/` as its base path.
 
-## Running unit tests
-
-Run `npm test -- --watch=false` to run the unit tests once with Vitest.
-
 ## Deploying to GitHub Pages
 
 The [deployment workflow](.github/workflows/deploy.yml) runs on every push to `main`. It builds the app, copies `index.html` to `404.html` as a fallback, and pushes the entire `dist/how-much-per/` directory to `gh-pages`.
