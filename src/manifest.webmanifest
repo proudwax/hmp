@@ -1,59 +1,104 @@
 {
-  "name": "how-much-per",
-  "short_name": "how-much-per",
-  "theme_color": "#1976d2",
-  "background_color": "#fafafa",
+  "id": "/hmp/",
+  "name": "HowMuchPer",
+  "short_name": "HMP",
+  "description": "Сравнивайте цены товаров за штуку и за килограмм.",
+  "theme_color": "#526ED3",
+  "background_color": "#FFFFFF",
+  "color_scheme_dark": {
+    "background_color": "#222222"
+  },
   "display": "standalone",
   "scope": "./",
   "start_url": "./",
+  "screenshots": [
+    {
+      "src": "assets/screenshots/calculator-mobile.png",
+      "sizes": "390x640",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Расчёт цены за килограмм на телефоне"
+    },
+    {
+      "src": "assets/screenshots/comparison-desktop.png",
+      "sizes": "1024x620",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Сравнение цен за штуку на компьютере"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Цена за килограмм",
+      "short_name": "За килограмм",
+      "url": "./?mode=weight-kg"
+    },
+    {
+      "name": "Цена за штуку",
+      "short_name": "За штуку",
+      "url": "./?mode=amount"
+    }
+  ],
   "icons": [
     {
       "src": "assets/icons/icon-72x72.png",
       "sizes": "72x72",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any"
     },
     {
       "src": "assets/icons/icon-96x96.png",
       "sizes": "96x96",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any"
     },
     {
       "src": "assets/icons/icon-128x128.png",
       "sizes": "128x128",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any"
     },
     {
       "src": "assets/icons/icon-144x144.png",
       "sizes": "144x144",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any"
     },
     {
       "src": "assets/icons/icon-152x152.png",
       "sizes": "152x152",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any"
     },
     {
       "src": "assets/icons/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any"
     },
     {
       "src": "assets/icons/icon-384x384.png",
       "sizes": "384x384",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any"
     },
     {
       "src": "assets/icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-maskable-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/icons/icon-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

@@ -2,6 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  DOCUMENT,
   Inject,
   OnDestroy,
 } from '@angular/core';
@@ -43,8 +44,10 @@ export class CheckedComponent implements OnDestroy {
     @Inject(CONFIG_LIST) public readonly config$: ConfigList,
     @Inject(CONFIG_PLUGIN) public readonly pluginList: CheckedLikePlugin[],
     @Inject(ConfigActiveService) private _configActive: ConfigActiveService,
+    @Inject(DOCUMENT) document: Document,
   ) {
     const active = this._storage.getItem(this._storeKey);
+    const requested = new URLSearchParams(document.location?.search).get('mode');
 
     this.list$ = this.config$.pipe(
       map((configList: AppConfig[]) =>
@@ -52,7 +55,7 @@ export class CheckedComponent implements OnDestroy {
       ),
       tap((checkedList: CheckedItem[]) =>
         this.form.patchValue({
-          value: this._getStartConfigActive(active, checkedList),
+          value: this._getStartConfigActive(requested, active, checkedList),
         }),
       ),
     );
@@ -91,10 +94,15 @@ export class CheckedComponent implements OnDestroy {
   }
 
   private _getStartConfigActive(
+    requested: string | null,
     active: AppConfig | null,
     configList: CheckedItem[],
   ): string {
     const list = configList.map((item) => item.value);
+
+    if (requested && list.includes(requested)) {
+      return requested;
+    }
 
     if (active && list.includes(active)) {
       return active;
