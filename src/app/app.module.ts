@@ -6,7 +6,6 @@ import {
 } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
-import { ReactiveFormsModule } from '@angular/forms';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { provideTaiga } from '@taiga-ui/core';
 import { environment } from '../environments/environment';
@@ -38,7 +37,6 @@ const initializer = () => {
     CheckedComponent,
     CostComponent,
     BrowserModule,
-    ReactiveFormsModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production,
       // Register the ServiceWorker as soon as the app is stable

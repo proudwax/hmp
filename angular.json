@@ -95,7 +95,7 @@
                 "src/manifest.webmanifest"
               ],
               "styles": ["src/styles.scss"],
-              "polyfills": "src/polyfills.ts"
+              "polyfills": ["zone.js"]
             }
           },
           "defaultConfiguration": "production"

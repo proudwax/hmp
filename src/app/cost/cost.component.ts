@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { TuiFormatNumberPipe } from '@taiga-ui/kit';
 
 @Component({
@@ -10,5 +10,5 @@ import { TuiFormatNumberPipe } from '@taiga-ui/kit';
   standalone: true,
 })
 export class CostComponent {
-  @Input() data: number | null = 0;
+  public readonly data = input<number | null>(0);
 }

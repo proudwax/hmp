@@ -1,7 +1,4 @@
-<!--<app-list *ngIf="(data$ | async) as data" [data]="data" class="tui-space_top-5" (cleared)="onCleared()"></app-list>-->
-@if (data$ | async; as data) {
-  <app-list [data]="data" (cleared)="onCleared($event)"></app-list>
-}
-<app-checked></app-checked>
-<app-cost [data]="calculate.changes | async"></app-cost>
-<app-calculate #calculate (saved)="onSaved($event)"></app-calculate>
+<app-list [data]="history.rows()" (cleared)="history.clearList()"></app-list>
+<app-checked (modeSelected)="history.selectMode($event)"></app-checked>
+<app-cost [data]="calculate.total()"></app-cost>
+<app-calculate #calculate (saved)="onSaved($event, calculate)"></app-calculate>

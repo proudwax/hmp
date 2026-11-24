@@ -1,20 +1,16 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Inject,
-  Input,
-  Output,
+  computed,
+  inject,
+  input,
+  output,
 } from '@angular/core';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiButton, TuiNumberFormatSettings } from '@taiga-ui/core';
 import { TuiFormatNumberPipe } from '@taiga-ui/kit';
 import { TuiCardLarge } from '@taiga-ui/layout';
-import { map } from 'rxjs/operators';
-import { CONFIG_ACTIVE, ConfigActive } from '../config/config-active.token';
-import { AppConfig } from '../config/config.service';
-import { CONFIG_PLUGIN } from '../config/config.token';
-import { ListLikePlugin } from './list.type';
+import { ConfigActiveService } from '../config/config-active.service';
 
 @Component({
   selector: 'app-list',
@@ -25,58 +21,13 @@ import { ListLikePlugin } from './list.type';
   standalone: true,
 })
 export class ListComponent {
-  @Input()
-  public set data(value: number[][]) {
-    this.min = Math.min(...value.map((item) => item[2]));
+  private readonly _modes = inject(ConfigActiveService);
 
-    this._data = value;
-  }
-
-  public get data(): number[][] {
-    return this._data;
-  }
-
-  private _data: number[][] = [];
-
-  public min: number = 0;
-  public title: string[] = [];
-  public units: string[] = [];
-  public config: AppConfig | null = null;
+  public readonly data = input.required<readonly number[][]>();
+  public readonly columns = computed(() => this._modes.plugin().getList());
+  public readonly cleared = output<void>();
   public readonly numberFormat: Partial<TuiNumberFormatSettings> = {
     precision: Infinity,
     decimalSeparator: ',',
   };
-
-  @Output() cleared: EventEmitter<AppConfig> = new EventEmitter<AppConfig>();
-
-  constructor(
-    @Inject(CONFIG_ACTIVE) private readonly _activeConfig$: ConfigActive,
-    @Inject(CONFIG_PLUGIN) private readonly _pluginList: ListLikePlugin[],
-  ) {
-    this._activeConfig$
-      .pipe(
-        map((config: AppConfig) => {
-          const find = this._pluginList.find((plugin) =>
-            plugin.support(config),
-          );
-
-          return { ...find!.getList(), config };
-        }),
-      )
-      .subscribe(({ title, unit, config }) => {
-        this.title = title;
-        this.units = unit;
-        this.config = config;
-      });
-  }
-
-  public trackBy(index: number, item: any): number {
-    return index;
-  }
-
-  public onClear(event: MouseEvent): void {
-    event.preventDefault();
-
-    this.cleared.emit(this.config as AppConfig);
-  }
 }

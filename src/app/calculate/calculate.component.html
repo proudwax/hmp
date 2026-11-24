@@ -1,39 +1,35 @@
-@if (list$ | async; as data) {
-  <form
-    class="tui-container tui-container_adaptive"
-    [formGroup]="form"
-    (ngSubmit)="onSubmit($event)"
-  >
-    <div tuiGroup formArrayName="calculate">
-      @for (_ of calculate.controls; track trackByIndex(i, _); let i = $index) {
-        <tui-textfield class="tui-group__inherit-item" tuiTextfieldSize="l">
-          <input
-            tuiInputNumber
-            [formControlName]="i"
-            [postfix]="data.unit[i]"
-          />
-        </tui-textfield>
-      }
-      <button
-        class="tui-group__auto-width-item"
-        tuiIconButton
-        type="submit"
-        size="l"
-        iconStart="@tui.plus"
-        appearance="secondary"
-        [disabled]="buttonDisabled"
-        (click)="onSave($event)"
-      ></button>
+<form
+  class="tui-container tui-container_adaptive"
+  (submit)="onSave($event)"
+>
+  <div tuiGroup>
+    @for (input of inputs(); track input.key) {
+      <tui-textfield class="tui-group__inherit-item" tuiTextfieldSize="l">
+        <input
+          tuiInputNumber
+          [formField]="input.field"
+          [postfix]="input.unit"
+        />
+      </tui-textfield>
+    }
+    <button
+      class="tui-group__auto-width-item"
+      tuiIconButton
+      type="submit"
+      size="l"
+      iconStart="@tui.plus"
+      appearance="secondary"
+      [disabled]="buttonDisabled()"
+    ></button>
 
-      <button
-        class="tui-group__auto-width-item"
-        tuiIconButton
-        type="button"
-        size="l"
-        iconStart="@tui.x"
-        [disabled]="buttonDisabled"
-        (click)="onReset($event)"
-      ></button>
-    </div>
-  </form>
-}
+    <button
+      class="tui-group__auto-width-item"
+      tuiIconButton
+      type="button"
+      size="l"
+      iconStart="@tui.x"
+      [disabled]="buttonDisabled()"
+      (click)="reset()"
+    ></button>
+  </div>
+</form>

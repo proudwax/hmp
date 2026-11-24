@@ -1,47 +1,64 @@
-import {Inject, Injectable} from '@angular/core';
-import {APP_STORAGE} from './storage/storage.providers';
-import {AbstractStorage} from './storage/abstract-storage';
-import {merge, Observable, Subject} from 'rxjs';
-import {scan, shareReplay, startWith, switchMap, tap} from 'rxjs/operators';
-import {CONFIG_ACTIVE} from './config/config-active.token';
+import {inject, Injectable, signal} from '@angular/core';
+import type {CalculateSaved} from './calculate/calculate.type';
+import {ConfigActiveService} from './config/config-active.service';
 import {AppConfig} from './config/config.service';
-
+import {APP_STORAGE} from './storage/storage.providers';
 
 @Injectable()
 export class AppService {
-  private readonly _list$: Subject<any> = new Subject<any>();
-  private readonly _reset$: Subject<AppConfig> = new Subject<AppConfig>();
-  public readonly list$: Observable<number[][]>;
+  private readonly _modes = inject(ConfigActiveService);
+  private readonly _storage = inject(APP_STORAGE);
+  private readonly _rows = signal<readonly CalculateSaved[]>(
+    this._readRows(this._modes.active())
+  );
+  public readonly rows = this._rows.asReadonly();
 
-  constructor(
-    @Inject(CONFIG_ACTIVE) private readonly _config$: Observable<AppConfig>,
-    @Inject(APP_STORAGE) private readonly _storage: AbstractStorage
-  ) {
-    this.list$ = merge(this._config$, this._reset$.asObservable()).pipe(
-      switchMap(config => this._list$.asObservable().pipe(
-        startWith(this._initList(config)),
-        scan((a, b) => [...a, b]),
-        tap(value => this._storage.setItem(config, JSON.stringify(value)))
-      )),
-      shareReplay({refCount: true, bufferSize: 1})
+  public selectMode(mode: AppConfig): void {
+    if (!this._modes.hasMode(mode) || mode === this._modes.active()) {
+      return;
+    }
+
+    const rows = this._readRows(mode);
+    this._modes.changeConfig(mode);
+    this._rows.set(rows);
+  }
+
+  public addListItem(row: CalculateSaved): void {
+    const mode = this._modes.active();
+    const rows = [...this._readRows(mode), row];
+
+    this._storage.setItem(mode, JSON.stringify(rows));
+    this._rows.set(rows);
+  }
+
+  public clearList(): void {
+    this._storage.removeItem(this._modes.active());
+    this._rows.set([]);
+  }
+
+  private _readRows(mode: AppConfig): CalculateSaved[] {
+    const stored = this._storage.getItem(mode);
+
+    if (!stored) {
+      return [];
+    }
+
+    let rows: unknown;
+
+    try {
+      rows = JSON.parse(stored);
+    } catch {
+      return [];
+    }
+
+    if (!Array.isArray(rows)) {
+      return [];
+    }
+
+    return rows.filter((row: unknown): row is CalculateSaved =>
+      Array.isArray(row) &&
+      row.length === 3 &&
+      row.every((value: unknown) => typeof value === 'number' && Number.isFinite(value))
     );
-  }
-
-  private _initList(config: AppConfig): number[][] {
-    const dataString = this._storage.getItem(config);
-    return dataString ? JSON.parse(dataString) : [];
-  }
-
-  public addListItem(value: number[]): void {
-    this._list$.next(value);
-  }
-
-  public updateList(value: any[]): void {
-    this._list$.next({type: 'UPDATE', value});
-  }
-
-  public clearList(config: AppConfig): void {
-    this._storage.removeItem(config);
-    this._reset$.next(config);
   }
 }

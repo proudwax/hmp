@@ -1,13 +1,13 @@
 <section class="tui-container tui-container_adaptive">
-  <form class="group" [formGroup]="form">
+  <form class="group">
     <div tuiGroup size="m" class="group" [collapsed]="true">
-      @for (item of list$ | async; track trackByItem($index, item)) {
+      @for (item of options; track item.value) {
         <label tuiBlock>
           <input
             tuiRadio
             type="radio"
-            formControlName="value"
             [value]="item.value"
+            [formField]="form.value"
           />
           {{ item.text }}
         </label>

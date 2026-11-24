@@ -1,23 +1,23 @@
-@if (data.length) {
+@if (data().length) {
   <div tuiCardLarge>
     <section class="list">
       <table tuiTable>
         <thead>
           <tr>
             <th tuiTh></th>
-            @for (item of title; track trackBy($index, item)) {
+            @for (item of columns().title; track $index) {
               <th tuiTh>{{ item }}</th>
             }
           </tr>
         </thead>
         <tbody tuiTbody>
-          @for (item of data; track trackBy(index, item); let index = $index) {
+          @for (item of data(); track $index; let index = $index) {
             <tr>
               <td tuiTd>{{ index + 1 }}.</td>
-              @for (value of item; track trackBy(i, value); let i = $index) {
+              @for (value of item; track $index; let i = $index) {
                 <td tuiTd>
                   {{ value | tuiFormatNumber: numberFormat }}
-                  <small>{{ units[i] }}</small>
+                  <small>{{ columns().unit[i] }}</small>
                 </td>
               }
             </tr>
@@ -31,7 +31,7 @@
           size="m"
           type="button"
           appearance="primary"
-          (click)="onClear($event)"
+          (click)="cleared.emit()"
           iconStart="@tui.trash"
         >
           Очистить

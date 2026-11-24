@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { AppService } from './app.service';
-import { AppConfig } from './config/config.service';
+import { CalculateComponent } from './calculate/calculate.component';
+import type { CalculateSaved } from './calculate/calculate.type';
 
 @Component({
   selector: 'app-root',
@@ -17,19 +17,10 @@ import { AppConfig } from './config/config.service';
   standalone: false,
 })
 export class AppComponent {
-  public data$: Observable<number[][]>;
+  public readonly history = inject(AppService);
 
-  constructor(@Inject(AppService) private _appService: AppService) {
-    this.data$ = this._appService.list$;
+  public onSaved(row: CalculateSaved, calculator: CalculateComponent): void {
+    this.history.addListItem(row);
+    calculator.reset();
   }
-
-  public onSaved(data: number[]): void {
-    this._appService.addListItem(data);
-  }
-
-  public onCleared(config: AppConfig): void {
-    this._appService.clearList(config);
-  }
-
-  public onChecked($event: { value: string }): void {}
 }

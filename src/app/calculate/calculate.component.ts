@@ -1,40 +1,18 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
-  EventEmitter,
-  Inject,
-  OnDestroy,
-  Output,
+  computed,
+  effect,
+  inject,
+  linkedSignal,
+  output,
+  untracked,
 } from '@angular/core';
-import {
-  AbstractControl,
-  ReactiveFormsModule,
-  UntypedFormArray,
-  UntypedFormBuilder,
-  UntypedFormControl,
-} from '@angular/forms';
+import { form, FormField } from '@angular/forms/signals';
 import { TuiButton, TuiGroup, TuiTextfield } from '@taiga-ui/core';
 import { TuiInputNumber } from '@taiga-ui/kit';
-import { Observable, Subject } from 'rxjs';
-import {
-  distinctUntilChanged,
-  map,
-  shareReplay,
-  switchMap,
-  takeUntil,
-  tap,
-} from 'rxjs/operators';
-import { CONFIG_ACTIVE, ConfigActive } from '../config/config-active.token';
-import { AppConfig } from '../config/config.service';
-import { CONFIG_PLUGIN } from '../config/config.token';
-import { CalculateForm } from './calculate.form';
-import {
-  CalculateItem,
-  CalculateLikePlugin,
-  CalculateSaved,
-} from './calculate.type';
+import { ConfigActiveService } from '../config/config-active.service';
+import type { CalculateItem, CalculateSaved } from './calculate.type';
 
 @Component({
   selector: 'app-calculate',
@@ -42,8 +20,7 @@ import {
   templateUrl: './calculate.component.html',
   styleUrls: ['./calculate.component.scss'],
   imports: [
-    AsyncPipe,
-    ReactiveFormsModule,
+    FormField,
     TuiGroup,
     TuiTextfield,
     TuiInputNumber,
@@ -52,107 +29,66 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
 })
-export class CalculateComponent implements OnDestroy {
-  private _destroyed$: Subject<void> = new Subject<void>();
+export class CalculateComponent {
+  private readonly _modes = inject(ConfigActiveService);
 
-  public readonly list$: Observable<CalculateItem>;
-  public form!: CalculateForm;
-  public buttonDisabled: boolean = true;
+  public readonly settings = computed<CalculateItem>(() => this._modes.plugin().getCalculate());
+  private readonly _draft = linkedSignal({
+    source: this._modes.active,
+    computation: () => this._createDraft(),
+  });
+  private readonly _values = computed(() =>
+    this._draft().values.map(value => value ?? 0)
+  );
+  public readonly fields = form(this._draft);
+  public readonly inputs = computed(() => {
+    const mode = this._modes.active();
+    const units = this.settings().unit;
 
-  public get calculate(): UntypedFormArray {
-    return this.form.get('calculate') as UntypedFormArray;
-  }
+    return Array.from(this.fields.values, (field, index) => ({
+      field,
+      unit: units[index],
+      // Taiga's input mask needs a new element when the unit changes.
+      key: `${mode}:${index}`,
+    }));
+  });
 
-  public get total(): UntypedFormControl {
-    return this.form.get('total') as UntypedFormControl;
-  }
+  public readonly total = computed(() => {
+    const result = this.settings().handler(...this._values());
+    return Number(result.toFixed(2));
+  });
+  public readonly buttonDisabled = computed(() => {
+    const total = this.total();
+    return total === 0 || !Number.isFinite(total);
+  });
+  public readonly saved = output<CalculateSaved>();
 
-  @Output() readonly changes: EventEmitter<number> = new EventEmitter<number>();
-  @Output() readonly saved: EventEmitter<CalculateSaved> =
-    new EventEmitter<CalculateSaved>();
+  constructor() {
+    let previousMode = this._modes.active();
 
-  constructor(
-    @Inject(CONFIG_ACTIVE) private readonly _activeConfig$: ConfigActive,
-    @Inject(CONFIG_PLUGIN) private readonly pluginList: CalculateLikePlugin[],
-    @Inject(UntypedFormBuilder) private readonly _fb: UntypedFormBuilder,
-    @Inject(ChangeDetectorRef) private readonly _cdr: ChangeDetectorRef,
-  ) {
-    this.form = new CalculateForm({
-      calculate: this._fb.array([]),
-      total: this._fb.control(0),
+    effect(() => {
+      const mode = this._modes.active();
+
+      if (mode !== previousMode) {
+        previousMode = mode;
+        untracked(() => this.fields().reset());
+      }
     });
-
-    this.list$ = this._activeConfig$.pipe(
-      map((config: AppConfig) => {
-        const find = this.pluginList!.find((plugin: CalculateLikePlugin) =>
-          plugin.support(config),
-        );
-
-        return find!.getCalculate();
-      }),
-      tap(({ unit }) => this._createForm(unit.length)),
-      shareReplay({ refCount: true, bufferSize: 1 }),
-    );
-
-    this.list$
-      .pipe(
-        switchMap(({ handler }: CalculateItem) =>
-          this.calculate.valueChanges.pipe(
-            map((value: number[]) => handler(...value)),
-          ),
-        ),
-        distinctUntilChanged(),
-      )
-      .subscribe((total: number) => {
-        const result = parseFloat(total.toFixed(2));
-        this.total.patchValue(result);
-      });
-
-    this.total.valueChanges
-      .pipe(
-        takeUntil(this._destroyed$),
-        tap((value: number) => (this.buttonDisabled = !value)),
-      )
-      .subscribe((value: number) => this.changes.emit(value));
   }
 
-  onSave(event: MouseEvent): void {
+  public onSave(event: Event): void {
     event.preventDefault();
-    this.saved.emit([...this.calculate.value, this.total.value]);
-    this._resetForm();
-    this.buttonDisabled = true;
-  }
 
-  onReset(event: MouseEvent): void {
-    event.preventDefault();
-    this._resetForm();
-    this.buttonDisabled = true;
-  }
-
-  onSubmit(event: any): void {
-    console.log(event);
-  }
-
-  private _resetForm(): void {
-    this.calculate.reset([0, 0]);
-  }
-
-  private _createForm(length: number): void {
-    this.calculate.clear();
-
-    for (let i = 0; i < length; i++) {
-      (this.form.get('calculate')! as UntypedFormArray).push(
-        this._fb.control(0),
-      );
+    if (!this.buttonDisabled()) {
+      this.saved.emit([...this._values(), this.total()]);
     }
   }
 
-  public trackByIndex(index: number, item: AbstractControl): AbstractControl {
-    return item;
+  public reset(): void {
+    this.fields().reset(this._createDraft());
   }
 
-  ngOnDestroy(): void {
-    this._destroyed$.next();
-    this._destroyed$.complete();
+  private _createDraft(): { values: (number | null)[] } {
+    return { values: this.settings().unit.map(() => 0) };
   }
 }

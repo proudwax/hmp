@@ -1,16 +1,13 @@
-// This file is required by karma.conf.js and loads recursively all the .spec and framework files
-
-import 'zone.js/testing';
-import { getTestBed } from '@angular/core/testing';
-import {
-  BrowserDynamicTestingModule,
-  platformBrowserDynamicTesting
-} from '@angular/platform-browser-dynamic/testing';
-
-// First, initialize the Angular testing environment.
-getTestBed().initTestEnvironment(
-  BrowserDynamicTestingModule,
-  platformBrowserDynamicTesting(), {
-    teardown: { destroyAfterEach: false }
+// jsdom does not implement media queries used by Taiga UI.
+if (typeof window.matchMedia !== 'function') {
+  window.matchMedia = (media: string): MediaQueryList => ({
+    media,
+    matches: false,
+    onchange: null,
+    addListener: () => {},
+    removeListener: () => {},
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    dispatchEvent: () => true,
+  });
 }
-);
