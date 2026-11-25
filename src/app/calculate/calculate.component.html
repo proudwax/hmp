@@ -1,12 +1,9 @@
-<form
-  class="tui-container tui-container_adaptive"
-  (submit)="onSave($event)"
->
+<form class="tui-container tui-container_adaptive" (submit)="onSave($event)">
   <div tuiGroup>
     @for (input of inputs(); track input.key) {
       <tui-textfield class="tui-group__inherit-item" tuiTextfieldSize="l">
         <input
-          type="number"
+          [attr.inputmode]="'decimal'"
           tuiInputNumber
           [formField]="input.field"
           [postfix]="input.unit"
