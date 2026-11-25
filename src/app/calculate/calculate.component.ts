@@ -86,6 +86,6 @@ export class CalculateComponent {
   }
 
   private _createDraft(): { values: (number | null)[] } {
-    return { values: this.settings().unit.map(() => 0) };
+    return { values: this.settings().unit.map(() => null) };
   }
 }
