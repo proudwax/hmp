@@ -3,7 +3,7 @@
     @for (input of inputs(); track input.key) {
       <tui-textfield class="tui-group__inherit-item" tuiTextfieldSize="l">
         <input
-          [attr.inputmode]="'decimal'"
+          [min]="0.001"
           tuiInputNumber
           [formField]="input.field"
           [postfix]="input.unit"
