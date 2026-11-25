@@ -19,27 +19,24 @@ import type { CalculateItem, CalculateSaved } from './calculate.type';
   exportAs: 'appCalculate',
   templateUrl: './calculate.component.html',
   styleUrls: ['./calculate.component.scss'],
-  imports: [
-    FormField,
-    TuiGroup,
-    TuiTextfield,
-    TuiInputNumber,
-    TuiButton,
-  ],
+  imports: [FormField, TuiGroup, TuiTextfield, TuiInputNumber, TuiButton],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
 })
 export class CalculateComponent {
   private readonly _modes = inject(ConfigActiveService);
 
-  public readonly settings = computed<CalculateItem>(() => this._modes.plugin().getCalculate());
+  public readonly settings = computed<CalculateItem>(() =>
+    this._modes.plugin().getCalculate(),
+  );
   private readonly _draft = linkedSignal({
     source: this._modes.active,
     computation: () => this._createDraft(),
   });
   private readonly _values = computed(() =>
-    this._draft().values.map(value => value ?? 0)
+    this._draft().values.map((value) => value ?? 0),
   );
+
   public readonly fields = form(this._draft);
   public readonly inputs = computed(() => {
     const mode = this._modes.active();

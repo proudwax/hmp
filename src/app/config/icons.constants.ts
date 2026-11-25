@@ -1,0 +1,5 @@
+export const ICON_CURRENCY = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M7.49 13.57V11.82h5.17q.11 0 .29-.01q.18-.02.41-.09q.57-.17.81-.58q.24-.4.24-.96q0-.32-.09-.66q-.08-.35-.31-.61q-.23-.28-.65-.39q-.21-.06-.41-.07q-.21-.01-.29-.01H9.88V6.5h2.87q.06 0 .33.01q.26.01.59.05q.98.15 1.61.65q.63.5.93 1.25q.3.76.3 1.66q0 1.4-.71 2.29q-.69.9-2.13 1.1q-.33.05-.59.06q-.27 0-.33 0zm0 2.55v-1.6h6.73v1.6zM8.56 17.5V6.5h2.08v11z"/></svg>`;
+
+export const ICON_WEIGHT = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M4.12 17V7H6.01v4.61L9.81 7h2.31L7.94 11.93L12.38 17H9.99L6.01 12.44V17zm9.23 0V7h6.53V8.76H15.24V17z"/></svg>`;
+
+export const ICON_AMOUNT = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M1.4 17V7H3.29v8.24H6.15V7H8.04v8.24H10.9V7h1.89V17zm15.66 0V8.76H13.9V7h8.2V8.76H18.94V17zm3.65 0V15.11H22.6V17z"/></svg>`;

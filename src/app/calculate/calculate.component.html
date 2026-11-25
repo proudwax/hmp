@@ -1,13 +1,12 @@
 <form class="tui-container tui-container_adaptive" (submit)="onSave($event)">
   <div tuiGroup>
     @for (input of inputs(); track input.key) {
-      <tui-textfield class="tui-group__inherit-item" tuiTextfieldSize="l">
-        <input
-          [min]="0.001"
-          tuiInputNumber
-          [formField]="input.field"
-          [postfix]="input.unit"
-        />
+      <tui-textfield
+        [iconStart]="input.unit"
+        class="tui-group__inherit-item"
+        tuiTextfieldSize="l"
+      >
+        <input [min]="0.001" tuiInputNumber [formField]="input.field" />
       </tui-textfield>
     }
     <button
