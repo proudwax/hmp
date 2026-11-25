@@ -12,7 +12,10 @@
         </thead>
         <tbody tuiTbody>
           @for (item of data(); track $index; let index = $index) {
-            <tr>
+            <tr
+              [class.list__row--lowest-cost]="index === highlightedRows().lowest"
+              [class.list__row--highest-cost]="index === highlightedRows().highest"
+            >
               <td tuiTd>{{ index + 1 }}.</td>
               @for (value of item; track $index; let i = $index) {
                 <td tuiTd>

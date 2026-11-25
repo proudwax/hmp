@@ -1,4 +1,7 @@
 :host {
+  --list-lowest-cost-background: var(--tui-status-positive-pale, #e6f6ec);
+  --list-highest-cost-background: var(--tui-status-negative-pale, #fce8e8);
+
   display: block;
 
   max-height: 100%;
@@ -28,6 +31,14 @@
     margin-top: 1.5rem;
     text-align: right;
   }
+}
+
+.list__row--lowest-cost > td {
+  background-color: var(--list-lowest-cost-background);
+}
+
+.list__row--highest-cost > td {
+  background-color: var(--list-highest-cost-background);
 }
 
 .table {
